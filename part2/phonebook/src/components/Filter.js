@@ -1,6 +1,13 @@
+import { useState } from 'react'
+
+
+
 const Filter = ({searchTerm, setSearchTerm}) => {
+    
+
     const handleSearchTermChange = (event) => {
       setSearchTerm(event.target.value)
+      
     }
   
     return (
