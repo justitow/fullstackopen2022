@@ -1,14 +1,41 @@
 import { useState, useEffect } from 'react'
 import axios from 'axios'
 
-
-const Countries = ({countries, setSearchTerm}) => {
+const Weather = ({country}) => {
+  const [weather, setWeather] = useState({current: {temp:0, wind_speed:0, weather:{icon:'03d'}}})
 
   
- 
+  useEffect(() => {
+    console.log('effect')
+    axios
+      .get(`https://api.openweathermap.org/data/3.0/onecall?lat=${country.latlng[0]}&lon=${country.latlng[1]}&appid=${process.env.REACT_APP_API_KEY}`)
+      .then(response => {
+        console.log('promise fulfilled')
+        setWeather(response.data)
+      })
+  }, [country])
 
+
+  return (
+    <div>
+      <h2>Weather in {country.capital}</h2>
+      <div>temperature: {weather.current.temp}</div>
+      <img src={`http://openweathermap.org/img/wn/${weather.current.weather.icon}@2x.png`} />\
+      <div>wind: {weather.current.wind_speed}</div>
+      
+    </div>
+  )
+}
+
+const Countries = ({countries, setSearchTerm}) => {
+  
+  
   if (countries.length === 1){
+   
+
     const country = countries[0]
+    console.log(country);
+    console.log(process.env.REACT_APP_API_KEY)
     return (<>
     <h1>{country.name.common}</h1>
     <div>capital {country.capital}</div>
@@ -18,6 +45,7 @@ const Countries = ({countries, setSearchTerm}) => {
       {Object.values(country.languages).map((val) => <li key={val}>{val}</li>)}
     </ul>
     <img src={country.flags.png} alt={country.name.common + "'s flag"}/>
+    <Weather country={country}/>
     </>)
   }
 
