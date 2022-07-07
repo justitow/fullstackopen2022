@@ -8,7 +8,6 @@ import axios from 'axios'
 
 const App = () => {
   const [persons, setPersons] = useState([])
-  const [personsToShow, setPersonsToShow] = useState([]) 
   const [searchTerm, setSearchTerm] = useState('')
 
   useEffect( () => {
@@ -16,7 +15,6 @@ const App = () => {
       .get('http://localhost:3001/persons')
       .then(response => {
         setPersons(response.data)
-        setPersonsToShow(response.data)
       })
   }, [])
 
@@ -28,7 +26,7 @@ const App = () => {
       <h2>Phonebook</h2>
       <Filter searchTerm={searchTerm} setSearchTerm={setSearchTerm}/>
       <h2>add a new</h2>
-      <PersonForm persons={persons} setPersons={setPersons} setPersonsToShow={setPersonsToShow}/>
+      <PersonForm persons={persons} setPersons={setPersons}/>
       <h2>Numbers</h2>
       <Persons persons={newPersonsToShow}/>
     </div>
