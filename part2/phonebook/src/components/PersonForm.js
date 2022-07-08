@@ -2,7 +2,7 @@ import personService from '../services/persons'
 import { useState } from 'react'
 
 
-const PersonForm = ({persons, setPersons}) => {
+const PersonForm = ({persons, setPersons, setErrorMessage}) => {
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
 
@@ -28,9 +28,23 @@ const PersonForm = ({persons, setPersons}) => {
           console.log(response)
           setPersons(persons.map(person => person.id !== matchingPerson.id ? person : response))
           return 
+        }).catch(response => {
+
+          setPersons(persons.filter(person => person.id !== matchingPerson.id))
+          setErrorMessage(`Person '${matchingPerson.name}' has already been deleted.`)
+      setTimeout( () => {
+          setErrorMessage(null)
+        }, 5000)
         })
       }
       }
+      else
+      setErrorMessage(`Person '${matchingPerson.name}' has already been added.`)
+      setTimeout( () => {
+          setErrorMessage(null)
+        }, 5000)
+
+      
       
     }
     else {
@@ -45,7 +59,12 @@ const PersonForm = ({persons, setPersons}) => {
         setPersons(persons.concat(response))
         setNewName('')
         setNewNumber('')
+        setErrorMessage(`Person '${response.name}' has now been added.`)
+        setTimeout( () => {
+          setErrorMessage(null)
+        }, 5000)
       })
+ 
 
     }
 
