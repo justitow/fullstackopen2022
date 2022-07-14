@@ -46,7 +46,7 @@ const App = () => {
         })
         .catch(error => {
           notify(
-            `the person '${existingPerson.name}' was had already been from the server`, 'alert'
+            `${error.message}`, 'alert'
           )
           setPersons(persons.filter(p => p.id !== existingPerson.id))
         })
@@ -58,6 +58,8 @@ const App = () => {
     personService.create(newPerson).then(savedPerson => {
       setPersons(persons.concat(savedPerson))
       notify(`Added ${savedPerson.name}`)
+    }).catch(error => {
+      notify(`${error.body.message}`, 'alert')
     })
   }
 
