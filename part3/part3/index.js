@@ -91,11 +91,8 @@ app.delete('/api/notes/:id', (request, response) => {
 })
 
 
-const unkownEndpoint = (request, response) => {
-    response.status(404).send({error: 'unkown endpoint'})
-}
 
-app.use(unkownEndpoint)
+
 const PORT = process.env.PORT || 3001
 app.set("port", PORT)
 app.listen(PORT, () => {
