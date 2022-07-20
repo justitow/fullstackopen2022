@@ -185,7 +185,6 @@ test('deleting a single blog post', async () => {
   const delete_id = helper.initialBlogs[0]._id
   const token = await create_token()
   await api.delete(`/api/blogs/${delete_id}`)
-    .auth(token, {type: 'bearer'})
     .expect(204)
 
   const blogs_after = await api.get('/api/blogs/')
