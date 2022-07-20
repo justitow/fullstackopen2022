@@ -42,7 +42,7 @@ const userExtractor = (request, response, next) => {
       return response.status(401).json({ error: 'token missing or invalid'})
     }
 
-    request.userId = decodedToken.id
+    request.userId = decodedToken.id.toString()
   }
   next()
 }

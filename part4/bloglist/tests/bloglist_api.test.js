@@ -7,11 +7,21 @@ const api = supertest(app)
 const Blog = require('../models/blog')
 const User = require('../models/user')
 
+const create_token = async () => {
+  await api
+    .post('/api/users')
+    .send({username: 'test', name: 'test', password: 'test'})
+  const test_user_response = await api
+    .post('/api/login')
+    .send({username: 'test', password: 'test'})
 
+  return test_user_response.body.token
+}
 
 beforeEach(async () => {
   await Blog.deleteMany({})
   await User.deleteMany({})
+  
   const allBlogs = helper.initialBlogs.map( (blog) => new Blog(blog))
   const promiseArray = allBlogs.map(blog => blog.save())
 
@@ -65,10 +75,12 @@ test('a new entry can be posted to the db', async () => {
     likes: 2,
     __v: 0
   }  
-
+  const token = await create_token()
   await api.post('/api/blogs/')
+    .auth(token, {type: 'bearer'})
     .send(new_entry)
     .expect(201)
+    
 
   const new_blogs = await api.get('/api/blogs')
   const ids = new_blogs.body.map( blog => blog.id)
@@ -87,7 +99,10 @@ test('a missing like parameter is defaulted to zero', async () => {
     __v: 0
   }
 
+  const token = await create_token()
+
   await api.post('/api/blogs/')
+    .auth(token, {type: 'bearer'})
     .send(new_entry)
     .expect(201)
   
@@ -107,8 +122,9 @@ describe('missing parameters', () => {
       likes: 2,
       __v: 0
     }
-  
+    const token = await create_token()
     await api.post('/api/blogs/')
+      .auth(token, { type: 'bearer'})
       .send(new_entry)
       .expect(201)
   
@@ -126,8 +142,9 @@ test('missing url returns error 400', async () => {
     likes: 2,
     __v: 0
   }
-
+  const token = await create_token()
   await api.post('/api/blogs/')
+    .auth(token, {type: 'bearer'})
     .send(new_entry)
     .expect(400)
 
@@ -146,8 +163,10 @@ test('missing title returns error 400', async () => {
     likes: 2,
     __v: 0
   }
+  const token = await create_token()
 
   await api.post('/api/blogs/')
+    .auth(token, {type: 'bearer'})
     .send(new_entry)
     .expect(400)
 
@@ -164,7 +183,9 @@ describe('tests for deletion', () => {
 
 test('deleting a single blog post', async () => {
   const delete_id = helper.initialBlogs[0]._id
+  const token = await create_token()
   await api.delete(`/api/blogs/${delete_id}`)
+    .auth(token, {type: 'bearer'})
     .expect(204)
 
   const blogs_after = await api.get('/api/blogs/')
@@ -177,7 +198,9 @@ test('deleting a single blog post', async () => {
 
 test('atempting to delete non-existant blog', async () => {
   const delete_id = "13412132321321321213213321321"
+  const token = await create_token()
   await api.delete(`/api/blogs/${delete_id}`)
+    .auth(token, {type: 'bearer'})
     .expect(400)
 
   const blogs_after = await api.get('/api/blogs/')
