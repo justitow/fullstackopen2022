@@ -10,7 +10,11 @@ const schema = mongoose.Schema({
     required: true
   },
   author: String,
-  likes: Number,
+  likes: {
+    type: Number,
+    default: 0,
+    required: true
+  },
   user: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User'

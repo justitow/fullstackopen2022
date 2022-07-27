@@ -6,7 +6,6 @@ const User = require('../models/user')
 
 router.get('/', async (request, response) => {
   const notes = await Blog
-    .find({})
     .find({}).populate('user', { username: 1, name: 1 })
 
   response.json(notes)
@@ -18,7 +17,7 @@ router.post('/', async (request, response) => {
   }
 
   const user = request.user
-  const blog = new Blog({ ...request.body, user: user.id })
+  const blog = new Blog({ ...request.body, user: user, likes: 0 })
 
   const savedBlog = await blog.save()
 
@@ -53,7 +52,7 @@ router.put('/:id', async (request, response) => {
       request.params.id, 
       blog, 
       { new: true, runValidators: true, context: 'query' }
-    )
+    ).populate('user', { username: 1, name: 1})
       
   response.json(updatedBlog)
 })
